@@ -50,49 +50,71 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setupSlideshow() {
-    const imgElement = document.getElementById('slideshow-img');
-    if (!imgElement) return;
+    const slide1 = document.getElementById('slide-1');
+    const slide2 = document.getElementById('slide-2');
+
+    if (!slide1 || !slide2) return;
 
     let currentIndex = 0;
+    let activeSlide = 1; // 1 or 2
 
-    // Initial Image
-    imgElement.src = SLIDESHOW_IMAGES[0];
+    // Determine initial image if we have one
+    if (SLIDESHOW_IMAGES.length > 0) {
+        slide1.src = SLIDESHOW_IMAGES[0];
+    }
 
-    function showNextSlide() {
+    function transitionToNext() {
+        // If only 1 image, don't cycle
+        if (SLIDESHOW_IMAGES.length <= 1) return;
+
         const nextIndex = (currentIndex + 1) % SLIDESHOW_IMAGES.length;
-        const nextImage = new Image();
+        const nextImageSrc = SLIDESHOW_IMAGES[nextIndex];
 
-        // Preload next image
-        nextImage.src = SLIDESHOW_IMAGES[nextIndex];
+        // Identify which element is currently hidden (back buffer)
+        // If activeSlide is 1 (visible), we want to load into slide2
+        const nextSlideEl = activeSlide === 1 ? slide2 : slide1;
+        const currentSlideEl = activeSlide === 1 ? slide1 : slide2;
 
-        nextImage.onload = () => {
-            // Wait for slide duration before starting fade out
+        // Load the next image into the hidden element
+        const preloadImg = new Image();
+        preloadImg.src = nextImageSrc;
+
+        preloadImg.onload = () => {
+            // Once loaded, set the src of the actual hidden DOM element
+            nextSlideEl.src = nextImageSrc;
+
+            // Wait for display duration before starting transition
             setTimeout(() => {
-                imgElement.style.opacity = 0;
+                // Standard Crossfade:
+                // 1. Ensure nextSlide (back) is z-index 1 and fully opaque
+                nextSlideEl.style.zIndex = 1;
+                nextSlideEl.style.opacity = 1;
 
-                // Wait for fade out (1s) then swap
+                // 2. Ensure currentSlide (front) is z-index 2
+                currentSlideEl.style.zIndex = 2;
+
+                // 3. Fade out currentSlide (revealing nextSlide behind it)
+                currentSlideEl.style.opacity = 0;
+
+                // 4. After transition, updating tracking
                 setTimeout(() => {
-                    imgElement.src = SLIDESHOW_IMAGES[nextIndex];
+                    activeSlide = activeSlide === 1 ? 2 : 1;
                     currentIndex = nextIndex;
-                    imgElement.style.opacity = 1;
+                    transitionToNext();
+                }, 1000); // Transition time
 
-                    // Schedule next cycle
-                    showNextSlide();
-                }, 1000);
             }, SLIDE_DURATION);
         };
 
-        // Fallback in case error
-        nextImage.onerror = () => {
-            console.error("Failed to load image:", SLIDESHOW_IMAGES[nextIndex]);
-            // Skip to next
-            currentIndex = nextIndex;
-            showNextSlide();
+        preloadImg.onerror = () => {
+            console.error("Failed to load image:", nextImageSrc);
+            currentIndex = nextIndex; // Skip
+            transitionToNext();
         };
     }
 
     // Start the loop
-    showNextSlide();
+    transitionToNext();
 }
 
 function createFloatingItems(contentInput) {
