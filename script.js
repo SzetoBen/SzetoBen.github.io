@@ -204,6 +204,10 @@ function setupProposalPage() {
         ];
 
         noBtn.addEventListener('mouseover', () => {
+            // Change text FIRST so we update dimensions based on new text length
+            const randomText = noTexts[Math.floor(Math.random() * noTexts.length)];
+            noBtn.innerText = randomText;
+
             // Make button fixed so it can move freely across screen
             noBtn.style.position = 'fixed';
 
@@ -211,12 +215,12 @@ function setupProposalPage() {
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
 
-            // Get button dimensions
+            // Get button dimensions (after text update)
             const btnWidth = noBtn.offsetWidth;
             const btnHeight = noBtn.offsetHeight;
 
             // Calculate random position with padding to keep it fully on screen
-            const padding = 20;
+            const padding = 50;
             const maxX = viewportWidth - btnWidth - padding;
             const maxY = viewportHeight - btnHeight - padding;
 
@@ -226,10 +230,6 @@ function setupProposalPage() {
 
             noBtn.style.left = `${x}px`;
             noBtn.style.top = `${y}px`;
-
-            // Change text
-            const randomText = noTexts[Math.floor(Math.random() * noTexts.length)];
-            noBtn.innerText = randomText;
         });
 
         noBtn.addEventListener('click', (e) => {
