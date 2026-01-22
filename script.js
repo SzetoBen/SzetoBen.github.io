@@ -58,20 +58,41 @@ function setupSlideshow() {
     // Initial Image
     imgElement.src = SLIDESHOW_IMAGES[0];
 
-    setInterval(() => {
-        // Fade out
-        imgElement.style.opacity = 0;
+    function showNextSlide() {
+        const nextIndex = (currentIndex + 1) % SLIDESHOW_IMAGES.length;
+        const nextImage = new Image();
 
-        setTimeout(() => {
-            // Change image
-            currentIndex = (currentIndex + 1) % SLIDESHOW_IMAGES.length;
-            imgElement.src = SLIDESHOW_IMAGES[currentIndex];
+        // Preload next image
+        nextImage.src = SLIDESHOW_IMAGES[nextIndex];
 
-            // Fade in
-            imgElement.style.opacity = 1;
-        }, 1000); // Wait for fade out to finish (matches CSS transition)
+        nextImage.onload = () => {
+            // Wait for slide duration before starting fade out
+            setTimeout(() => {
+                imgElement.style.opacity = 0;
 
-    }, SLIDE_DURATION + 1000); // Duration + transition time
+                // Wait for fade out (1s) then swap
+                setTimeout(() => {
+                    imgElement.src = SLIDESHOW_IMAGES[nextIndex];
+                    currentIndex = nextIndex;
+                    imgElement.style.opacity = 1;
+
+                    // Schedule next cycle
+                    showNextSlide();
+                }, 1000);
+            }, SLIDE_DURATION);
+        };
+
+        // Fallback in case error
+        nextImage.onerror = () => {
+            console.error("Failed to load image:", SLIDESHOW_IMAGES[nextIndex]);
+            // Skip to next
+            currentIndex = nextIndex;
+            showNextSlide();
+        };
+    }
+
+    // Start the loop
+    showNextSlide();
 }
 
 function createFloatingItems(contentInput) {

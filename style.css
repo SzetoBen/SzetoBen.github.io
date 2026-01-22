@@ -29,8 +29,10 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden;
-    /* Prevent scrollbars from floating elements */
+    overflow-y: auto;
+    /* Allow direct scrolling if content is tall */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll from floating hearts */
 }
 
 /* Container for specific pages */
