@@ -19,7 +19,11 @@ const SLIDESHOW_IMAGES = [
 const SLIDE_DURATION = 3000; // 3 seconds per slide
 
 // Background Configuration
-const LANDING_PAGE_ICON = "icon/stitch.png"; // Change this to an emoji (e.g. "🌸") or an image path (e.g. "icon.png")
+// You can now put multiple items in this list!
+const LANDING_PAGE_ICONS = [
+    "icon/stitch.png",
+    "icon/hangydon.png"
+];
 
 document.addEventListener('DOMContentLoaded', () => {
     // Page Identification
@@ -27,11 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const page = path.split("/").pop();
 
     // Floating Items Animation
-    // Check if landing page and if a custom icon is set
+    // Check if landing page and if a custom icon (or list) is set
     if (page === "" || page === "index.html") {
-        createFloatingItems(LANDING_PAGE_ICON);
+        createFloatingItems(LANDING_PAGE_ICONS);
     } else {
-        createFloatingItems("❤️"); // Default for other pages
+        createFloatingItems(["❤️", "💕"]); // Default mix for other pages
     }
 
     if (page === "" || page === "index.html") {
@@ -70,16 +74,24 @@ function setupSlideshow() {
     }, SLIDE_DURATION + 1000); // Duration + transition time
 }
 
-function createFloatingItems(content) {
+function createFloatingItems(contentInput) {
     const bg = document.createElement('div');
-    bg.className = 'bg-hearts'; // Keeping class name for positioning, but content changes
+    bg.className = 'bg-hearts'; // Keeping class name for positioning
     document.body.appendChild(bg);
-
-    const isImage = content.includes(".") && !content.includes(" "); // Simple check for file extension
 
     for (let i = 0; i < 20; i++) {
         const item = document.createElement('div');
         item.className = 'floating-item';
+
+        // Determine content for this specific particle
+        let content;
+        if (Array.isArray(contentInput)) {
+            content = contentInput[Math.floor(Math.random() * contentInput.length)];
+        } else {
+            content = contentInput;
+        }
+
+        const isImage = content.includes(".") && !content.includes(" "); // Simple check for file extension
 
         if (isImage) {
             const img = document.createElement('img');
@@ -150,10 +162,25 @@ function setupProposalPage() {
         ];
 
         noBtn.addEventListener('mouseover', () => {
-            // Get random position within viewport
-            // Subtract button dimensions to keep it visible
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            // Make button fixed so it can move freely across screen
+            noBtn.style.position = 'fixed';
+
+            // Get viewport dimensions
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+
+            // Get button dimensions
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // Calculate random position with padding to keep it fully on screen
+            const padding = 20;
+            const maxX = viewportWidth - btnWidth - padding;
+            const maxY = viewportHeight - btnHeight - padding;
+
+            // Ensure minimums
+            const x = Math.max(padding, Math.random() * maxX);
+            const y = Math.max(padding, Math.random() * maxY);
 
             noBtn.style.left = `${x}px`;
             noBtn.style.top = `${y}px`;

@@ -150,9 +150,10 @@ input[type="text"]:focus {
 
 #no-btn {
     background-color: var(--secondary-color);
-    position: fixed;
-    /* Fixed allows it to move anywhere on screen, ignoring container */
-    transition: all 0.2s ease;
+    position: relative;
+    /* Restored to relative so it sits nicely next to Yes initially */
+    transition: top 0.2s ease, left 0.2s ease;
+    /* Animate movement only */
     z-index: 100;
     /* Ensure it stays on top */
 }
