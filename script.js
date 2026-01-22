@@ -175,7 +175,7 @@ function validateName(inputName, errorElement) {
         window.location.href = "proposal.html";
     } else {
         errorElement.style.display = "block";
-        errorElement.textContent = "Access Denied: Try 'Valentine'";
+        errorElement.textContent = "Access Denied: You are not the one for me";
         // Shake animation effect could be added here
     }
 }
@@ -193,15 +193,14 @@ function setupProposalPage() {
     if (noBtn) {
         const noTexts = [
             "Are you sure?",
-            "Think again!",
-            "Really?",
+            "Seriouslly?",
+            "Not Sigma",
             "Try the other one!",
             "You can't say no!",
             "Last chance!",
             "Don't do it!",
             "Wrong button!",
-            "Nice try!",
-            "Nope!"
+            "Please?"
         ];
 
         noBtn.addEventListener('mouseover', () => {
