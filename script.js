@@ -208,21 +208,24 @@ function setupProposalPage() {
             const randomText = noTexts[Math.floor(Math.random() * noTexts.length)];
             noBtn.innerText = randomText;
 
-            // Make button fixed so it can move freely across screen
-            noBtn.style.position = 'fixed';
+            // Make button absolute so it moves relative to the container
+            noBtn.style.position = 'absolute';
 
-            // Get viewport dimensions
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
+            // Get container dimensions
+            const container = document.querySelector('.container');
+            if (!container) return; // Safety check
+
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
 
             // Get button dimensions (after text update)
             const btnWidth = noBtn.offsetWidth;
             const btnHeight = noBtn.offsetHeight;
 
-            // Calculate random position with padding to keep it fully on screen
-            const padding = 50;
-            const maxX = viewportWidth - btnWidth - padding;
-            const maxY = viewportHeight - btnHeight - padding;
+            // Calculate random position with padding inside the container
+            const padding = 10;
+            const maxX = containerWidth - btnWidth - padding;
+            const maxY = containerHeight - btnHeight - padding;
 
             // Ensure minimums
             const x = Math.max(padding, Math.random() * maxX);
