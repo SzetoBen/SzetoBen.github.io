@@ -206,10 +206,9 @@ function setupProposalPage() {
             "Seriouslly?",
             "Not Sigma",
             "Try the other one!",
-            "You can't say no!",
-            "Last chance!",
-            "Don't do it!",
-            "Wrong button!",
+            "진짜?",
+            "Don't do it.",
+            "Ur so mean",
             "Please?"
         ];
 
