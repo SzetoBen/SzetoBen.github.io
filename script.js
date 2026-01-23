@@ -77,11 +77,20 @@ function setupSlideshow() {
 
         // Load the next image into the hidden element
         const preloadImg = new Image();
+        const startTime = Date.now(); // Start timer when we BEGIN loading
+
         preloadImg.src = nextImageSrc;
 
         preloadImg.onload = () => {
             // Once loaded, set the src of the actual hidden DOM element
             nextSlideEl.src = nextImageSrc;
+
+            // Calculate how much time passed while loading
+            const elapsed = Date.now() - startTime;
+            // Subtract that from the intended duration
+            // If loading took 1s and duration is 3s, we wait 2s more.
+            // If loading took 5s, we wait 0s (immediate transition).
+            const remainingTime = Math.max(0, SLIDE_DURATION - elapsed);
 
             // Wait for display duration before starting transition
             setTimeout(() => {
@@ -103,7 +112,7 @@ function setupSlideshow() {
                     transitionToNext();
                 }, 1000); // Transition time
 
-            }, SLIDE_DURATION);
+            }, remainingTime);
         };
 
         preloadImg.onerror = () => {
