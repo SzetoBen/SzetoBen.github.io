@@ -183,7 +183,7 @@ input[type="text"]:focus {
     text-align: left;
     white-space: normal;
     /* Changed from pre-wrap to normal so source code breaks don't show */
-    font-family: 'Dancing Script', cursive;
+    font-family: 'Dancing Script';
     /* Handwritten feel */
     font-size: 1.3rem;
 }
