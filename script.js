@@ -1,7 +1,7 @@
 
 // Configuration
 const ACCESS_NAME = "chelsea kim"; // Placeholder name
-const VALENTINES_DATE = new Date("2026-01-22T09:08:00"); // Target Date
+const VALENTINES_DATE = new Date("2026-01-23T00:00:00"); // Target Date "2026-02-14T05:00:00"
 
 // Slideshow Configuration
 // You need to put images in the 'slideshow' folder and update this list!
