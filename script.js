@@ -155,7 +155,8 @@ function createFloatingItems(contentInput) {
 
         item.style.left = Math.random() * 100 + "vw";
         item.style.animationDuration = (Math.random() * 10 + 10) + "s";
-        item.style.animationDelay = (Math.random() * 10) + "s";
+        // Negative delay makes it start "mid-animation" so screen is full immediately
+        item.style.animationDelay = -(Math.random() * 15) + "s";
 
         bg.appendChild(item);
     }
