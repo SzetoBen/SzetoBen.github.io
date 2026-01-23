@@ -181,7 +181,8 @@ input[type="text"]:focus {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-top: 2rem;
     text-align: left;
-    white-space: pre-wrap;
+    white-space: normal;
+    /* Changed from pre-wrap to normal so source code breaks don't show */
     font-family: 'Dancing Script', cursive;
     /* Handwritten feel */
     font-size: 1.3rem;
