@@ -1,14 +1,28 @@
 :root {
-    --bg-color: #050505;
-    --panel-bg: rgba(20, 20, 20, 0.7);
-    --border-color: rgba(255, 255, 255, 0.1);
-    --accent-color: #00ffcc; /* Cyan */
-    --accent-secondary: #ff0055; /* Neon Red/Pink */
-    --text-primary: #e0e0e0;
-    --text-secondary: #888888;
-    
-    --font-ui: 'Inter', sans-serif;
+    /* Base Colors: Dark but with a hint of purple/pink */
+    --bg-color: #0f0b15;
+    /* Deep purple-black */
+    --panel-bg: rgba(30, 25, 35, 0.6);
+    --border-color: rgba(255, 105, 180, 0.2);
+
+    /* Accents */
+    --accent-color: #ff80bf;
+    /* Soft Neon Pink */
+    --accent-secondary: #b388ff;
+    /* Soft Neon Purple */
+    --accent-glow: #ff0055;
+
+    --text-primary: #ffe6f2;
+    /* Very light pinkish white */
+    --text-secondary: #b0a0b0;
+
+    /* Fonts */
+    --font-ui: 'Quicksand', sans-serif;
+    /* Rounded & Cute */
     --font-mono: 'JetBrains Mono', monospace;
+    /* Tech/Futuristic */
+    --font-heading: 'M PLUS Rounded 1c', sans-serif;
+    /* Bold & Cute */
 }
 
 * {
@@ -23,10 +37,10 @@ body {
     font-family: var(--font-ui);
     height: 100vh;
     overflow-x: hidden;
-    overflow-y: auto; /* Allow scroll if needed on small screens */
+    overflow-y: auto;
 }
 
-/* Background Grid/Effect */
+/* Background Grid/Effect - Softer, more 'dreamy' grid */
 body::before {
     content: "";
     position: fixed;
@@ -34,10 +48,11 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
-        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 2px, 3px 100%;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(100, 0, 50, 0.1) 0%, rgba(0, 0, 0, 0) 70%),
+        linear-gradient(rgba(20, 10, 20, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 10, 20, 0.5) 1px, transparent 1px);
+    background-size: 100% 100%, 30px 30px, 30px 30px;
     z-index: -1;
     pointer-events: none;
 }
@@ -56,18 +71,19 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
     margin-bottom: 20px;
 }
 
 .glitch-text {
-    font-family: var(--font-mono);
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--text-primary);
-    text-transform: uppercase;
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(255, 128, 191, 0.6);
+    /* Make it look a bit like a cute logo */
 }
 
 .header-right {
@@ -77,12 +93,13 @@ body::before {
 .neon-text {
     font-family: var(--font-mono);
     font-size: 2rem;
-    color: var(--accent-color);
-    text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    color: var(--accent-secondary);
+    text-shadow: 0 0 10px rgba(179, 136, 255, 0.5);
 }
 
 .sub-text {
-    font-family: var(--font-mono);
+    font-family: var(--font-ui);
+    font-weight: 600;
     font-size: 0.9rem;
     color: var(--text-secondary);
 }
@@ -90,69 +107,95 @@ body::before {
 /* Grid Layout */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3 Columns */
-    grid-template-rows: auto 400px 300px; /* Quote, Stocks, News/Photos */
-    gap: 20px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto 400px 300px;
+    gap: 25px;
+    /* More breathing room */
     flex: 1;
 }
 
-/* Glass Panels */
+/* Glass Panels - Rounder & softer */
 .glass-panel {
     background: var(--panel-bg);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    /* Rounded corners for cuteness */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     overflow: hidden;
     position: relative;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(255, 105, 180, 0.15);
+    /* Pink glow on hover */
+    border-color: var(--accent-color);
 }
 
 .panel-header {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 10px 15px;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--accent-secondary);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 20px;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: var(--text-primary);
     border-bottom: 1px solid var(--border-color);
-    text-transform: uppercase;
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* Quote Section (Spans all 3 columns) */
+/* Add cute little dots to headers */
+.panel-header::before {
+    content: "●";
+    color: var(--accent-color);
+    font-size: 0.8rem;
+}
+
+/* Quote Section */
 .quote-section {
     grid-column: 1 / -1;
-    min-height: 100px;
+    min-height: 120px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 20px;
+    background: linear-gradient(90deg, rgba(30, 25, 35, 0.6) 0%, rgba(50, 30, 50, 0.4) 50%, rgba(30, 25, 35, 0.6) 100%);
 }
 
 .quote-container {
-    max-width: 800px;
+    max-width: 900px;
 }
 
 .quote-icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
     color: var(--accent-secondary);
-    font-family: serif;
-    margin-right: 10px;
+    font-family: var(--font-heading);
+    margin: 0 10px;
+    vertical-align: middle;
 }
 
 #daily-quote {
-    font-size: 1.2rem;
-    font-style: italic;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-primary);
     display: inline;
+    line-height: 1.5;
 }
 
 .quote-author {
     display: block;
-    margin-top: 10px;
-    font-family: var(--font-mono);
-    color: var(--text-secondary);
-    font-size: 0.9rem;
+    margin-top: 15px;
+    font-family: var(--font-ui);
+    color: var(--accent-color);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Stocks Section */
@@ -161,7 +204,8 @@ body::before {
     flex-direction: column;
 }
 
-.tradingview-widget-container, #tradingview_chart {
+.tradingview-widget-container,
+#tradingview_chart {
     flex: 1;
     width: 100%;
     height: 100%;
@@ -169,7 +213,7 @@ body::before {
 
 /* Photo Section */
 .photo-section {
-    grid-column: 1 / 2; /* 1st column */
+    grid-column: 1 / 2;
     display: flex;
     flex-direction: column;
 }
@@ -178,6 +222,8 @@ body::before {
     flex: 1;
     position: relative;
     overflow: hidden;
+    border-radius: 0 0 20px 20px;
+    /* Match panel */
 }
 
 .slide-img {
@@ -188,7 +234,7 @@ body::before {
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 1s ease-in-out;
+    transition: opacity 1.5s ease-in-out;
 }
 
 .slide-img.active {
@@ -200,14 +246,14 @@ body::before {
     z-index: 1;
 }
 
-/* CRT Scanline Effect */
+/* Scanline - made softer */
 .scanline {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(255, 100, 200, 0.05) 50%, rgba(255, 100, 200, 0.05));
     background-size: 100% 4px;
     pointer-events: none;
     z-index: 10;
@@ -215,7 +261,7 @@ body::before {
 
 /* Tech News */
 .news-section {
-    grid-column: 2 / 4; /* Spans 2nd and 3rd column */
+    grid-column: 2 / 4;
     display: flex;
     flex-direction: column;
 }
@@ -223,13 +269,19 @@ body::before {
 .scrolling-list {
     flex: 1;
     overflow-y: auto;
-    padding: 15px;
+    padding: 20px;
 }
 
 .news-item {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
     padding-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px dashed var(--border-color);
+    /* Dashed line for cuteness */
+    transition: transform 0.2s;
+}
+
+.news-item:hover {
+    transform: translateX(5px);
 }
 
 .news-item:last-child {
@@ -239,26 +291,28 @@ body::before {
 .news-title {
     color: var(--text-primary);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.1rem;
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     transition: color 0.2s;
 }
 
 .news-title:hover {
-    color: var(--accent-color);
+    color: var(--accent-secondary);
 }
 
 .news-meta {
     font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: var(--text-secondary);
+    color: var(--accent-color);
+    opacity: 0.8;
 }
 
 /* Footer */
 .dashboard-footer {
-    border-top: 1px solid var(--border-color);
-    margin-top: 20px;
+    border-top: 2px solid var(--border-color);
+    margin-top: 30px;
     padding-top: 20px;
     display: flex;
     justify-content: space-between;
@@ -267,30 +321,36 @@ body::before {
 }
 
 .back-link {
-    color: var(--accent-secondary);
+    color: var(--accent-color);
     text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid var(--accent-color);
+    border-radius: 20px;
+    transition: all 0.2s;
 }
 
 .back-link:hover {
-    text-decoration: underline;
+    background: var(--accent-color);
+    color: #000;
 }
 
 .status-indicator {
-    color: #00ff00;
+    color: var(--accent-secondary);
+    text-shadow: 0 0 5px var(--accent-secondary);
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-color);
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #333;
-    border-radius: 4px;
+    background: var(--border-color);
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -300,15 +360,17 @@ body::before {
 /* Responsive */
 @media (max-width: 1024px) {
     .dashboard-grid {
-        grid-template-columns: 1fr; /* Stack everything */
+        grid-template-columns: 1fr;
         grid-template-rows: auto;
     }
 
-    .quote-section, .photo-section, .news-section {
+    .quote-section,
+    .photo-section,
+    .news-section {
         grid-column: 1 / -1;
     }
-    
-    .dashboard-grid > section {
-        min-height: 300px;
+
+    .dashboard-grid>section {
+        min-height: 350px;
     }
 }

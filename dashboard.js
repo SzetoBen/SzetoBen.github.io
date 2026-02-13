@@ -55,48 +55,89 @@ function initQuotes() {
 /*                            TradingView Widgets                             */
 /* -------------------------------------------------------------------------- */
 function initTradingViewWidgets() {
-    // 1. Watchlist (Left)
-    new TradingView.widget({
-        "container_id": "tradingview_watchlist",
-        "width": "100%",
-        "height": "100%",
-        "symbol": "NASDAQ:AAPL",
-        "interval": "D",
-        "timezone": "Etc/UTC",
-        "theme": "dark",
-        "style": "1",
-        "locale": "en",
-        "toolbar_bg": "#f1f3f6",
-        "enable_publishing": false,
-        "allow_symbol_change": true,
-        "details": true,
-        "hotlist": true,
-        "calendar": false,
-        "news": ["headlines"],
-        "show_popup_button": true,
-        "popup_width": "1000",
-        "popup_height": "650"
-    });
+    // 1. Market Overview (Watchlist) - REPLACED with specific Embed Widget
+    const watchlistContainer = document.getElementById('tradingview_watchlist');
+    if (watchlistContainer) {
+        watchlistContainer.innerHTML = ''; // Clear previous
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
+        script.async = true;
+        script.innerHTML = JSON.stringify({
+            "colorTheme": "dark",
+            "dateRange": "12M",
+            "showChart": true,
+            "locale": "en",
+            "largeChartUrl": "",
+            "isTransparent": true,
+            "showSymbolLogo": true,
+            "showFloatingTooltip": false,
+            "width": "100%",
+            "height": "100%",
+            "plotLineColorGrowing": "rgba(41, 98, 255, 1)",
+            "plotLineColorFalling": "rgba(255, 0, 0, 1)",
+            "gridLineColor": "rgba(240, 243, 250, 0)",
+            "scaleFontColor": "rgba(106, 109, 120, 1)",
+            "belowLineFillColorGrowing": "rgba(41, 98, 255, 0.12)",
+            "belowLineFillColorFalling": "rgba(255, 0, 0, 0.12)",
+            "belowLineFillColorGrowingBottom": "rgba(41, 98, 255, 0)",
+            "belowLineFillColorFallingBottom": "rgba(255, 0, 0, 0)",
+            "symbolActiveColor": "rgba(41, 98, 255, 0.12)",
+            "tabs": [
+                {
+                    "title": "Indices",
+                    "symbols": [
+                        { "s": "FOREXCOM:SPXUSD", "d": "S&P 500" },
+                        { "s": "FOREXCOM:NSXUSD", "d": "US 100" },
+                        { "s": "FOREXCOM:DJI", "d": "Dow 30" },
+                        { "s": "INDEX:NKY", "d": "Nikkei 225" },
+                        { "s": "INDEX:DEU40", "d": "DAX Index" },
+                        { "s": "FOREXCOM:UKXGBP", "d": "UK 100" }
+                    ],
+                    "originalTitle": "Indices"
+                },
+                {
+                    "title": "Futures",
+                    "symbols": [
+                        { "s": "CME_MINI:ES1!", "d": "S&P 500" },
+                        { "s": "CME:6E1!", "d": "Euro" },
+                        { "s": "COMEX:GC1!", "d": "Gold" },
+                        { "s": "NYMEX:CL1!", "d": "Crude Oil" },
+                        { "s": "NYMEX:NG1!", "d": "Natural Gas" },
+                        { "s": "CBOT:ZC1!", "d": "Corn" }
+                    ],
+                    "originalTitle": "Futures"
+                }
+            ]
+        });
+        watchlistContainer.appendChild(script);
+    }
 
-    // 2. Chart (Center) - Advanced Chart
-    new TradingView.widget({
-        "container_id": "tradingview_chart",
-        "width": "100%",
-        "height": "100%",
-        "symbol": "SP:SPX",
-        "interval": "D",
-        "timezone": "Etc/UTC",
-        "theme": "dark",
-        "style": "1",
-        "locale": "en",
-        "enable_publishing": false,
-        "allow_symbol_change": true,
-        "details": true
-    });
+    // 2. Technical Analysis (Center) - REPLACED with specific Embed Widget
+    const chartContainer = document.getElementById('tradingview_chart');
+    if (chartContainer) {
+        chartContainer.innerHTML = ''; // Clear previous
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+        script.async = true;
+        script.innerHTML = JSON.stringify({
+            "interval": "1D",
+            "width": "100%",
+            "isTransparent": true,
+            "height": "100%",
+            "symbol": "NASDAQ:AAPL",
+            "showIntervalTabs": true,
+            "locale": "en",
+            "colorTheme": "dark"
+        });
+        chartContainer.appendChild(script);
+    }
 
-    // 3. Timeline (Right) - We inject this via script tag creation because it's a different type
+    // 3. Timeline (Right)
     const timelineContainer = document.getElementById('tradingview_timeline');
     if (timelineContainer) {
+        timelineContainer.innerHTML = ''; // Clear previous just in case
         const script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-timeline.js';
@@ -131,7 +172,7 @@ async function initTechNews() {
         if (data.status === 'ok') {
             listEl.innerHTML = ''; // Clear loading text
 
-            data.items.slice(0, 10).forEach(item => {
+            data.items.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'news-item';
 
