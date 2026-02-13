@@ -2,8 +2,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     initClock();
     initQuotes();
-    initTradingViewWidgets();
+    // initTradingViewWidgets(); // Removed as requested
     initTechNews();
+    initGlobalNews(); // New Global News
     initSlideshow();
 });
 
@@ -52,106 +53,48 @@ function initQuotes() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                            TradingView Widgets                             */
+/*                                 Global News                                */
 /* -------------------------------------------------------------------------- */
-function initTradingViewWidgets() {
-    // 1. Market Overview (Watchlist) - REPLACED with specific Embed Widget
-    const watchlistContainer = document.getElementById('tradingview_watchlist');
-    if (watchlistContainer) {
-        watchlistContainer.innerHTML = ''; // Clear previous
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js';
-        script.async = true;
-        script.innerHTML = JSON.stringify({
-            "colorTheme": "dark",
-            "dateRange": "12M",
-            "showChart": true,
-            "locale": "en",
-            "largeChartUrl": "",
-            "isTransparent": true,
-            "showSymbolLogo": true,
-            "showFloatingTooltip": false,
-            "width": "100%",
-            "height": "100%",
-            "plotLineColorGrowing": "rgba(41, 98, 255, 1)",
-            "plotLineColorFalling": "rgba(255, 0, 0, 1)",
-            "gridLineColor": "rgba(240, 243, 250, 0)",
-            "scaleFontColor": "rgba(106, 109, 120, 1)",
-            "belowLineFillColorGrowing": "rgba(41, 98, 255, 0.12)",
-            "belowLineFillColorFalling": "rgba(255, 0, 0, 0.12)",
-            "belowLineFillColorGrowingBottom": "rgba(41, 98, 255, 0)",
-            "belowLineFillColorFallingBottom": "rgba(255, 0, 0, 0)",
-            "symbolActiveColor": "rgba(41, 98, 255, 0.12)",
-            "tabs": [
-                {
-                    "title": "Indices",
-                    "symbols": [
-                        { "s": "FOREXCOM:SPXUSD", "d": "S&P 500" },
-                        { "s": "FOREXCOM:NSXUSD", "d": "US 100" },
-                        { "s": "FOREXCOM:DJI", "d": "Dow 30" },
-                        { "s": "INDEX:NKY", "d": "Nikkei 225" },
-                        { "s": "INDEX:DEU40", "d": "DAX Index" },
-                        { "s": "FOREXCOM:UKXGBP", "d": "UK 100" }
-                    ],
-                    "originalTitle": "Indices"
-                },
-                {
-                    "title": "Futures",
-                    "symbols": [
-                        { "s": "CME_MINI:ES1!", "d": "S&P 500" },
-                        { "s": "CME:6E1!", "d": "Euro" },
-                        { "s": "COMEX:GC1!", "d": "Gold" },
-                        { "s": "NYMEX:CL1!", "d": "Crude Oil" },
-                        { "s": "NYMEX:NG1!", "d": "Natural Gas" },
-                        { "s": "CBOT:ZC1!", "d": "Corn" }
-                    ],
-                    "originalTitle": "Futures"
-                }
-            ]
-        });
-        watchlistContainer.appendChild(script);
-    }
+// Using NYT Top Stories
+const GLOBAL_RSS_URL = "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml";
+// Alternative: BBC: http://feeds.bbci.co.uk/news/rss.xml
+const GLOBAL_RSS_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(GLOBAL_RSS_URL)}`;
 
-    // 2. Technical Analysis (Center) - REPLACED with specific Embed Widget
-    const chartContainer = document.getElementById('tradingview_chart');
-    if (chartContainer) {
-        chartContainer.innerHTML = ''; // Clear previous
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
-        script.async = true;
-        script.innerHTML = JSON.stringify({
-            "interval": "1D",
-            "width": "100%",
-            "isTransparent": true,
-            "height": "100%",
-            "symbol": "NASDAQ:AAPL",
-            "showIntervalTabs": true,
-            "locale": "en",
-            "colorTheme": "dark"
-        });
-        chartContainer.appendChild(script);
-    }
+async function initGlobalNews() {
+    const listEl = document.getElementById('global-news-list');
 
-    // 3. Timeline (Right)
-    const timelineContainer = document.getElementById('tradingview_timeline');
-    if (timelineContainer) {
-        timelineContainer.innerHTML = ''; // Clear previous just in case
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-timeline.js';
-        script.async = true;
-        script.innerHTML = JSON.stringify({
-            "feedMode": "all_symbols",
-            "colorTheme": "dark",
-            "isTransparent": true,
-            "displayMode": "regular",
-            "width": "100%",
-            "height": "100%",
-            "locale": "en"
-        });
-        timelineContainer.appendChild(script);
+    try {
+        const response = await fetch(GLOBAL_RSS_API);
+        const data = await response.json();
+
+        if (data.status === 'ok') {
+            listEl.innerHTML = ''; // Clear loading text
+
+            // Show more items for Global News since it's a big panel
+            data.items.slice(0, 15).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'news-item';
+
+                // Format Date nicely
+                const date = new Date(item.pubDate);
+                const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                div.innerHTML = `
+                    <a href="${item.link}" target="_blank" class="news-title">${item.title}</a>
+                    <div class="news-meta">
+                        <span style="color:var(--neon-yellow)">[${timeString}]</span> 
+                        ${item.content ? item.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : ''}
+                    </div>
+                `;
+
+                listEl.appendChild(div);
+            });
+        } else {
+            listEl.innerHTML = '<div class="news-item">ERR: FEED_OFFLINE</div>';
+        }
+    } catch (e) {
+        console.error("Global RSS Fetch Error", e);
+        listEl.innerHTML = '<div class="news-item">ERR: NETWORK_FAILURE</div>';
     }
 }
 
@@ -172,25 +115,22 @@ async function initTechNews() {
         if (data.status === 'ok') {
             listEl.innerHTML = ''; // Clear loading text
 
-            data.items.forEach(item => {
+            data.items.slice(0, 8).forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'news-item';
 
-                const date = new Date(item.pubDate).toLocaleDateString();
-
                 div.innerHTML = `
                     <a href="${item.link}" target="_blank" class="news-title">${item.title}</a>
-                    <div class="news-meta">SOURCE: ${data.feed.title} // ${date}</div>
                 `;
 
                 listEl.appendChild(div);
             });
         } else {
-            listEl.innerHTML = '<div class="news-item">Error loading feed.</div>';
+            listEl.innerHTML = '<div class="news-item">ERR: DATA_CORRUPT</div>';
         }
     } catch (e) {
         console.error("RSS Fetch Error", e);
-        listEl.innerHTML = '<div class="news-item">System Offline (Feed Error).</div>';
+        listEl.innerHTML = '<div class="news-item">ERR: SIGNAL_LOST</div>';
     }
 }
 
@@ -256,10 +196,6 @@ async function initSlideshow() {
 
         // Load next image
         nextSlideEl.src = nextImage;
-
-        // Wait for load (in a real robust system we'd use onload, but setInterval feels "hacky-cool" for this dashboard)
-        // With 3s interval, we assume it loads fast enough. 
-        // For "Hundreds of photos", this lazy src setting is key.
 
         // Swap Opacity
         nextSlideEl.style.opacity = 1;

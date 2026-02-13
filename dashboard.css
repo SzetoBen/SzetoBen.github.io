@@ -1,28 +1,24 @@
 :root {
-    /* Base Colors: Dark but with a hint of purple/pink */
-    --bg-color: #0f0b15;
-    /* Deep purple-black */
-    --panel-bg: rgba(30, 25, 35, 0.6);
-    --border-color: rgba(255, 105, 180, 0.2);
+    /* Cyberpunk Palette */
+    --bg-color: #020204;
+    /* Pure Void */
+    --panel-bg: rgba(10, 10, 16, 0.85);
+    /* Dark blue-ish tint */
+    --border-color: #333333;
 
-    /* Accents */
-    --accent-color: #ff80bf;
-    /* Soft Neon Pink */
-    --accent-secondary: #b388ff;
-    /* Soft Neon Purple */
-    --accent-glow: #ff0055;
+    /* Neons */
+    --neon-blue: #00f3ff;
+    --neon-pink: #ff003c;
+    --neon-yellow: #fcee0a;
+    --neon-green: #00ff41;
 
-    --text-primary: #ffe6f2;
-    /* Very light pinkish white */
-    --text-secondary: #b0a0b0;
+    /* Text */
+    --text-primary: #e0e0e0;
+    --text-muted: #6b7d8c;
 
     /* Fonts */
-    --font-ui: 'Quicksand', sans-serif;
-    /* Rounded & Cute */
-    --font-mono: 'JetBrains Mono', monospace;
-    /* Tech/Futuristic */
-    --font-heading: 'M PLUS Rounded 1c', sans-serif;
-    /* Bold & Cute */
+    --font-head: 'Orbitron', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
 }
 
 * {
@@ -34,13 +30,13 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
-    font-family: var(--font-ui);
+    font-family: var(--font-mono);
     height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-/* Background Grid/Effect - Softer, more 'dreamy' grid */
+/* Cyber Grid Background */
 body::before {
     content: "";
     position: fixed;
@@ -49,16 +45,30 @@ body::before {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 50% 50%, rgba(100, 0, 50, 0.1) 0%, rgba(0, 0, 0, 0) 70%),
-        linear-gradient(rgba(20, 10, 20, 0.5) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(20, 10, 20, 0.5) 1px, transparent 1px);
-    background-size: 100% 100%, 30px 30px, 30px 30px;
+        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
     z-index: -1;
     pointer-events: none;
+    transform: perspective(500px) rotateX(2deg);
+    /* Slight perspective slant */
+}
+
+/* Vignette */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, transparent 50%, #000 100%);
+    pointer-events: none;
+    z-index: -1;
 }
 
 .dashboard-container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 20px;
     display: flex;
@@ -71,306 +81,321 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 15px;
-    border-bottom: 2px solid var(--border-color);
-    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--neon-blue);
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.dashboard-header::after {
+    content: "SYSTEM_READY";
+    position: absolute;
+    bottom: -20px;
+    right: 0;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--neon-blue);
+    background: #000;
+    padding: 2px 5px;
 }
 
 .glitch-text {
-    font-family: var(--font-heading);
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    color: var(--accent-color);
-    text-shadow: 0 0 10px rgba(255, 128, 191, 0.6);
-    /* Make it look a bit like a cute logo */
-}
-
-.header-right {
-    text-align: right;
+    font-family: var(--font-head);
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px var(--neon-pink);
+    letter-spacing: 2px;
 }
 
 .neon-text {
-    font-family: var(--font-mono);
-    font-size: 2rem;
-    color: var(--accent-secondary);
-    text-shadow: 0 0 10px rgba(179, 136, 255, 0.5);
+    font-family: var(--font-head);
+    font-size: 2.5rem;
+    color: var(--neon-yellow);
+    text-align: right;
+    letter-spacing: 2px;
 }
 
 .sub-text {
-    font-family: var(--font-ui);
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    text-align: right;
+    color: var(--neon-blue);
+    font-size: 1rem;
+    letter-spacing: 1px;
 }
 
 /* Grid Layout */
 .dashboard-grid {
     display: grid;
+    /* 3 Columns total.
+       Row 1: Quote (1-3)
+       Row 2: Global News (1-2), Tech News (3)
+       Row 3: Photos (1-3)
+    */
+    grid-template-columns: 2fr 1fr;
+    /* 2 main columns, but actually we use a 3-col conceptual grid or just flex */
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto 400px 300px;
-    gap: 25px;
-    /* More breathing room */
+    grid-template-rows: auto 500px 250px;
+    gap: 20px;
     flex: 1;
 }
 
-/* Glass Panels - Rounder & softer */
+/* Glass/Tech Panels */
 .glass-panel {
     background: var(--panel-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    /* Rounded corners for cuteness */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    overflow: hidden;
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
     position: relative;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Angled corners via clip-path? Or simple borders? Let's use simpler borders for better compatibility, maybe pseudo-elements */
 }
 
-.glass-panel:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(255, 105, 180, 0.15);
-    /* Pink glow on hover */
-    border-color: var(--accent-color);
+/* Corner Accents */
+.glass-panel::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 20px;
+    height: 20px;
+    border-top: 2px solid var(--neon-yellow);
+    border-left: 2px solid var(--neon-yellow);
+    z-index: 5;
+}
+
+.glass-panel::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 20px;
+    height: 20px;
+    border-bottom: 2px solid var(--neon-yellow);
+    border-right: 2px solid var(--neon-yellow);
+    z-index: 5;
 }
 
 .panel-header {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 12px 20px;
-    font-family: var(--font-heading);
+    background: rgba(0, 243, 255, 0.1);
+    padding: 10px 15px;
+    font-family: var(--font-head);
     font-size: 0.9rem;
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
-    letter-spacing: 1px;
+    color: var(--neon-blue);
+    border-bottom: 1px solid var(--neon-blue);
+    text-transform: uppercase;
+    letter-spacing: 2px;
     display: flex;
     align-items: center;
-    gap: 10px;
 }
 
-/* Add cute little dots to headers */
 .panel-header::before {
-    content: "●";
-    color: var(--accent-color);
-    font-size: 0.8rem;
+    content: "[";
+    margin-right: 5px;
+    color: var(--neon-pink);
 }
 
-/* Quote Section */
+.panel-header::after {
+    content: "]";
+    margin-left: 5px;
+    color: var(--neon-pink);
+}
+
+/* Specific Sections */
+
+/* Quote */
 .quote-section {
     grid-column: 1 / -1;
-    min-height: 120px;
+    min-height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    padding: 20px;
-    background: linear-gradient(90deg, rgba(30, 25, 35, 0.6) 0%, rgba(50, 30, 50, 0.4) 50%, rgba(30, 25, 35, 0.6) 100%);
+    border: 1px dashed var(--border-color);
 }
 
 .quote-container {
-    max-width: 900px;
-}
-
-.quote-icon {
-    font-size: 2.5rem;
-    color: var(--accent-secondary);
-    font-family: var(--font-heading);
-    margin: 0 10px;
-    vertical-align: middle;
+    text-align: center;
+    max-width: 80%;
 }
 
 #daily-quote {
-    font-size: 1.4rem;
-    font-weight: 500;
+    font-size: 1.2rem;
     color: var(--text-primary);
-    display: inline;
-    line-height: 1.5;
+    font-style: italic;
+    font-family: var(--font-mono);
 }
 
 .quote-author {
+    color: var(--neon-pink);
+    font-weight: bold;
+    margin-top: 10px;
     display: block;
-    margin-top: 15px;
-    font-family: var(--font-ui);
-    color: var(--accent-color);
+}
+
+.quote-icon {
+    display: none;
+    /* Cleaner look */
+}
+
+/* News Panels */
+#global-news-panel {
+    grid-column: 1 / 3;
+    /* Spans first 2 cols */
+}
+
+#tech-news-panel {
+    grid-column: 3 / 4;
+    /* Last col */
+}
+
+.scrolling-list {
+    padding: 15px;
+    overflow-y: auto;
+    height: calc(100% - 40px);
+}
+
+.news-item {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #222;
+}
+
+.news-title {
+    color: var(--neon-blue);
+    text-decoration: none;
     font-size: 1rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 5px;
+    transition: all 0.2s;
 }
 
-/* Stocks Section */
-.widget-panel {
-    display: flex;
-    flex-direction: column;
+.news-title:hover {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px var(--neon-yellow);
+    padding-left: 10px;
+    /* Slight movement */
 }
 
-.tradingview-widget-container,
-#tradingview_chart {
-    flex: 1;
-    width: 100%;
-    height: 100%;
+.news-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.loading-text {
+    animation: blink 1s infinite;
+    color: var(--neon-pink);
 }
 
 /* Photo Section */
 .photo-section {
-    grid-column: 1 / 2;
-    display: flex;
-    flex-direction: column;
+    grid-column: 1 / -1;
+    /* Full width bottom */
 }
 
 #slideshow-wrapper {
-    flex: 1;
+    width: 100%;
+    height: 100%;
     position: relative;
     overflow: hidden;
-    border-radius: 0 0 20px 20px;
-    /* Match panel */
 }
 
 .slide-img {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 1.5s ease-in-out;
+    transition: opacity 1s;
+    filter: sepia(20%) contrast(120%);
+    /* Cool filter */
 }
 
 .slide-img.active {
     opacity: 1;
-    z-index: 2;
 }
 
-.slide-img.next {
-    z-index: 1;
-}
-
-/* Scanline - made softer */
+/* Scanlines */
 .scanline {
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0) 50%,
+            rgba(0, 0, 0, 0.2) 50%,
+            rgba(0, 0, 0, 0.2));
+    background-size: 100% 4px;
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(255, 100, 200, 0.05) 50%, rgba(255, 100, 200, 0.05));
-    background-size: 100% 4px;
+    right: 0;
+    bottom: 0;
     pointer-events: none;
     z-index: 10;
 }
 
-/* Tech News */
-.news-section {
-    grid-column: 2 / 4;
-    display: flex;
-    flex-direction: column;
-}
-
-.scrolling-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-}
-
-.news-item {
-    margin-bottom: 18px;
-    padding-bottom: 15px;
-    border-bottom: 1px dashed var(--border-color);
-    /* Dashed line for cuteness */
-    transition: transform 0.2s;
-}
-
-.news-item:hover {
-    transform: translateX(5px);
-}
-
-.news-item:last-child {
-    border-bottom: none;
-}
-
-.news-title {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.1rem;
-    display: block;
-    margin-bottom: 8px;
-    transition: color 0.2s;
-}
-
-.news-title:hover {
-    color: var(--accent-secondary);
-}
-
-.news-meta {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--accent-color);
-    opacity: 0.8;
-}
-
 /* Footer */
 .dashboard-footer {
-    border-top: 2px solid var(--border-color);
-    margin-top: 30px;
-    padding-top: 20px;
+    grid-column: 1 / -1;
     display: flex;
     justify-content: space-between;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 20px;
 }
 
 .back-link {
-    color: var(--accent-color);
+    color: var(--neon-pink);
     text-decoration: none;
-    padding: 8px 16px;
-    border: 1px solid var(--accent-color);
-    border-radius: 20px;
-    transition: all 0.2s;
+    font-family: var(--font-head);
+    font-weight: 700;
 }
 
 .back-link:hover {
-    background: var(--accent-color);
-    color: #000;
+    color: var(--text-primary);
+    background: var(--neon-pink);
 }
 
 .status-indicator {
-    color: var(--accent-secondary);
-    text-shadow: 0 0 5px var(--accent-secondary);
+    color: var(--neon-green);
+    animation: pulse 2s infinite;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 6px;
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
-}
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
 
-::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 10px;
-}
+    50% {
+        opacity: 0.7;
+    }
 
-::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color);
+    100% {
+        opacity: 1;
+    }
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
+@media (max-width: 1000px) {
     .dashboard-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
+        display: flex;
+        flex-direction: column;
     }
 
+    #global-news-panel,
+    #tech-news-panel,
     .quote-section,
-    .photo-section,
-    .news-section {
-        grid-column: 1 / -1;
-    }
-
-    .dashboard-grid>section {
-        min-height: 350px;
+    .photo-section {
+        width: 100%;
+        min-height: 300px;
     }
 }
