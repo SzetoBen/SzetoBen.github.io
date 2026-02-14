@@ -52,6 +52,66 @@ function initQuotes() {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                            Stock Analyst Widget                            */
+/* -------------------------------------------------------------------------- */
+// USER: Add your tickers here!
+const MY_TICKERS = [
+    { symbol: "NASDAQ:AAPL", label: "Apple Inc." },
+    { symbol: "NASDAQ:NVDA", label: "NVIDIA Corp." },
+    { symbol: "NASDAQ:TSLA", label: "Tesla Inc." },
+    { symbol: "NASDAQ:MSFT", label: "Microsoft" },
+    { symbol: "NASDAQ:AMZN", label: "Amazon" },
+    { symbol: "NASDAQ:GOOGL", label: "Google" },
+    { symbol: "CRYPTO:BTCUSD", label: "Bitcoin" }
+];
+
+function initStockWidget() {
+    const select = document.getElementById('ticker-select');
+    const container = document.getElementById('analyst-widget-container');
+
+    if (!select || !container) return; // Guard clause
+
+    // Populate Dropdown
+    MY_TICKERS.forEach(t => {
+        const option = document.createElement('option');
+        option.value = t.symbol;
+        option.textContent = `${t.label} [${t.symbol.split(':')[1]}]`;
+        select.appendChild(option);
+    });
+
+    // Function to inject widget
+    function loadWidget(symbol) {
+        container.innerHTML = ''; // Clear previous
+
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
+        script.async = true;
+        script.innerHTML = JSON.stringify({
+            "interval": "1D",
+            "width": "100%",
+            "isTransparent": true,
+            "height": "100%",
+            "symbol": symbol,
+            "showIntervalTabs": true,
+            "locale": "en",
+            "colorTheme": "dark"
+        });
+
+        container.appendChild(script);
+    }
+
+    // Initial Load
+    loadWidget(MY_TICKERS[0].symbol);
+
+    // Change Listener
+    select.addEventListener('change', (e) => {
+        loadWidget(e.target.value);
+    });
+}
+
+
+/* -------------------------------------------------------------------------- */
 /*                                 Global News                                */
 /* -------------------------------------------------------------------------- */
 // Using NYT Top Stories
