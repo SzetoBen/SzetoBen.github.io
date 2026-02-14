@@ -1,9 +1,7 @@
 :root {
     /* Cyberpunk Palette */
     --bg-color: #020204;
-    /* Pure Void */
     --panel-bg: rgba(10, 10, 16, 0.85);
-    /* Dark blue-ish tint */
     --border-color: #333333;
 
     /* Neons */
@@ -50,21 +48,6 @@ body::before {
     background-size: 40px 40px;
     z-index: -1;
     pointer-events: none;
-    transform: perspective(500px) rotateX(2deg);
-    /* Slight perspective slant */
-}
-
-/* Vignette */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, transparent 50%, #000 100%);
-    pointer-events: none;
-    z-index: -1;
 }
 
 .dashboard-container {
@@ -73,7 +56,7 @@ body::after {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* Header */
@@ -84,19 +67,6 @@ body::after {
     padding-bottom: 20px;
     border-bottom: 2px solid var(--neon-blue);
     margin-bottom: 30px;
-    position: relative;
-}
-
-.dashboard-header::after {
-    content: "SYSTEM_READY";
-    position: absolute;
-    bottom: -20px;
-    right: 0;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    color: var(--neon-blue);
-    background: #000;
-    padding: 2px 5px;
 }
 
 .glitch-text {
@@ -106,7 +76,6 @@ body::after {
     color: var(--text-primary);
     text-transform: uppercase;
     text-shadow: 2px 2px 0px var(--neon-pink);
-    letter-spacing: 2px;
 }
 
 .neon-text {
@@ -114,7 +83,6 @@ body::after {
     font-size: 2.5rem;
     color: var(--neon-yellow);
     text-align: right;
-    letter-spacing: 2px;
 }
 
 .sub-text {
@@ -122,38 +90,48 @@ body::after {
     text-align: right;
     color: var(--neon-blue);
     font-size: 1rem;
-    letter-spacing: 1px;
 }
 
-/* Grid Layout */
+/* -------------------------------------------------------------------------- */
+/*                                 Grid Layouts                               */
+/* -------------------------------------------------------------------------- */
 .dashboard-grid {
-    display: grid;
-    /* 
-       Row 1: Top Row (Slideshow 2/3 + Quote 1/3)
-       Row 2: Global News (2/3) + Right Panel (1/3)
-    */
-    grid-template-columns: 1fr;
-    /* We use internal flex/grid wrappers now for rows */
-    grid-template-rows: 400px auto;
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    /* Space between rows */
     flex: 1;
 }
 
-/* Row Wrappers */
-.top-row-wrapper {
+.row-wrapper {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    /* Slideshow gets more space */
+    /* 2:1 Ratio for both rows */
     gap: 20px;
+    width: 100%;
 }
 
-.right-column-wrapper {
+.top-row {
+    height: 400px;
+    /* Fixed height for slideshow row */
+}
+
+.bottom-row {
+    height: 600px;
+    /* Fixed height for heavy news/data row */
+    min-height: 500px;
+}
+
+.right-column-stack {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    height: 100%;
 }
 
-/* Glass/Tech Panels */
+/* -------------------------------------------------------------------------- */
+/*                                Panel Styling                               */
+/* -------------------------------------------------------------------------- */
 .glass-panel {
     background: var(--panel-bg);
     border: 1px solid var(--neon-blue);
@@ -161,6 +139,7 @@ body::after {
     position: relative;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* Corner Accents */
@@ -197,143 +176,22 @@ body::after {
     border-bottom: 1px solid var(--neon-blue);
     text-transform: uppercase;
     letter-spacing: 2px;
-    display: flex;
-    align-items: center;
     flex-shrink: 0;
 }
 
-.panel-header::before {
-    content: "[";
-    margin-right: 5px;
-    color: var(--neon-pink);
-}
+/* -------------------------------------------------------------------------- */
+/*                              Widget Logic                                  */
+/* -------------------------------------------------------------------------- */
 
-.panel-header::after {
-    content: "]";
-    margin-left: 5px;
-    color: var(--neon-pink);
-}
-
-/* Specific Sections */
-
-/* Quote */
-.quote-section {
-    /* grid-column handled by wrapper */
-    min-height: 100px;
-    justify-content: center;
-    border: 1px dashed var(--border-color);
-}
-
-.quote-container {
-    text-align: center;
-    max-width: 80%;
-    margin: auto;
-    padding: 20px;
-}
-
-#daily-quote {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    font-style: italic;
-    font-family: var(--font-mono);
-}
-
-.quote-author {
-    color: var(--neon-pink);
-    font-weight: bold;
-    margin-top: 10px;
-    display: block;
-}
-
-.quote-icon {
-    display: none;
-}
-
-/* News Panels Layout */
-/* We can reuse top-row-wrapper style for row 2 if we want, or make a row-2-wrapper.
-   But to match previous ID selectors:
-*/
-#global-news-panel {
-    /* In the grid-template-columns: 1fr of dashboard-grid, this needs to share space with right-col if we want them side-by-side.
-       Let's actually change dashboard-grid to have rows that are wrappers.
-    */
-}
-
-/* Let's redefine the bottom grid area using a wrapper or grid-row */
-.bottom-row-wrapper {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-}
-
-/* Wait, I cannot easily wrap the bottom two sections in HTML without another HTML edit.
-   Better strategy: Keep dashboard-grid as is (flexible) and use grid-column on elements.
-   
-   .dashboard-grid {
-       grid-template-columns: 2fr 1fr; 
-       grid-auto-rows: minmax(300px, auto);
-   }
-*/
-
-
-/* Panel Specifics for New Layout */
-#global-news-panel {
-    /* Used to be grid-column: 1/3, now we use grid-row implied by HTML flow + CSS grid logic */
-    grid-column: 1 / 2;
-    /* Takes left side of bottom row */
-}
-
-.right-column-wrapper {
-    grid-column: 2 / 3;
-    /* Takes right side of bottom row */
-}
-
-/* Analyst Widget Controls */
-.controls-container {
-    padding: 10px;
-    border-bottom: 1px solid var(--neon-blue);
-    background: rgba(0, 0, 0, 0.3);
-}
-
-.cyber-select {
-    width: 100%;
-    background: #000;
-    color: var(--neon-green);
-    border: 1px solid var(--neon-green);
-    padding: 8px;
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    outline: none;
-    cursor: pointer;
-    text-transform: uppercase;
-}
-
-.cyber-select:focus {
-    box-shadow: 0 0 10px var(--neon-green);
-}
-
-#analyst-widget-container {
+/* Slideshow */
+#slideshow-wrapper {
     flex: 1;
     position: relative;
     overflow: hidden;
 }
 
-.scrolling-list {
-    padding: 15px;
-    overflow-y: auto;
-    height: calc(100% - 40px);
-}
-
-/* Photo Section */
 .photo-section {
-    /* grid-column handled by wrapper placement */
-}
-
-#slideshow-wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
+    /* takes full height of parent grid cell */
 }
 
 .slide-img {
@@ -350,93 +208,180 @@ body::after {
     opacity: 1;
 }
 
-/* Scanlines */
 .scanline {
-    background: linear-gradient(to bottom,
-            rgba(255, 255, 255, 0),
-            rgba(255, 255, 255, 0) 50%,
-            rgba(0, 0, 0, 0.2) 50%,
-            rgba(0, 0, 0, 0.2));
+    background: linear-gradient(to bottom, transparent, transparent 50%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.2));
     background-size: 100% 4px;
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     pointer-events: none;
     z-index: 10;
 }
 
-/* Footer */
-.dashboard-footer {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: space-between;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color);
-    margin-top: 20px;
+/* Quote */
+.quote-section {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
-.back-link {
-    color: var(--neon-pink);
-    text-decoration: none;
-    font-family: var(--font-head);
-    font-weight: 700;
+.quote-container {
+    padding: 20px;
 }
 
-.back-link:hover {
+#daily-quote {
+    font-size: 1.3rem;
+    font-style: italic;
     color: var(--text-primary);
-    background: var(--neon-pink);
 }
 
-.status-indicator {
+.quote-author {
+    margin-top: 15px;
+    color: var(--neon-pink);
+    font-weight: bold;
+    display: block;
+}
+
+.quote-icon {
+    display: none;
+}
+
+/* Global News (Left Big Panel) */
+#global-news-panel {
+    /* Implicitly Column 1 */
+}
+
+.scrolling-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.news-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+}
+
+.news-title {
+    color: var(--neon-blue);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.news-title:hover {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 5px var(--neon-yellow);
+}
+
+.news-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Right Stack (Analyst + Tech) */
+#analyst-panel {
+    flex: 1;
+    /* Takes half height of stack */
+    display: flex;
+    flex-direction: column;
+}
+
+#tech-news-panel {
+    flex: 1;
+    /* Takes half height of stack */
+}
+
+/* Analyst Controls */
+.controls-container {
+    padding: 10px;
+    border-bottom: 1px solid var(--neon-blue);
+}
+
+.cyber-select {
+    width: 100%;
+    background: #050505;
     color: var(--neon-green);
-    animation: pulse 2s infinite;
+    border: 1px solid var(--neon-green);
+    padding: 8px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+#analyst-widget-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Loading Helper */
+.loading-text {
+    padding: 20px;
+    color: var(--neon-pink);
+    animation: blink 1s infinite;
 }
 
 @keyframes blink {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
     50% {
         opacity: 0.5;
     }
 }
 
-@keyframes pulse {
-    0% {
-        opacity: 1;
-    }
+/* Footer */
+.dashboard-footer {
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
 
-    50% {
-        opacity: 0.7;
-    }
+.back-link {
+    color: var(--neon-pink);
+    text-decoration: none;
+    font-weight: 700;
+}
 
-    100% {
-        opacity: 1;
-    }
+.status-indicator {
+    color: var(--neon-green);
 }
 
 /* Responsive */
-@media (max-width: 1000px) {
-    .dashboard-grid {
+@media (max-width: 1200px) {
+
+    /* Stack Layout */
+    .row-wrapper {
         display: flex;
         flex-direction: column;
     }
 
-    .top-row-wrapper {
-        display: flex;
-        flex-direction: column;
+    .top-row,
+    .bottom-row {
+        height: auto;
     }
 
-    #global-news-panel,
-    .right-column-wrapper,
-    .quote-section,
     .photo-section {
-        width: 100%;
-        min-height: 300px;
+        height: 400px;
+    }
+
+    .quote-section {
+        min-height: 200px;
+    }
+
+    #global-news-panel {
+        height: 500px;
+    }
+
+    .right-column-stack {
+        height: auto;
+    }
+
+    #analyst-panel,
+    #tech-news-panel {
+        height: 400px;
     }
 }

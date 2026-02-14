@@ -12,7 +12,6 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="dashboard.css">
-    <!-- TradingView Script Removed -->
 </head>
 
 <body>
@@ -32,60 +31,69 @@
         <!-- Main Grid -->
         <main class="dashboard-grid">
 
-            <!-- Row 1: Quote (Full Width) -->
-            <section class="quote-section glass-panel">
-                <div class="quote-container">
-                    <span class="quote-icon">"</span>
-                    <p id="daily-quote">Loading system data...</p>
-                    <span class="quote-icon">"</span>
-                    <span class="quote-author" id="quote-author"></span>
-                </div>
-            </section>
+            <!-- ROW 1: Slideshow (Left) & Quote (Right) -->
+            <div class="row-wrapper top-row">
 
-            <!-- Row 2: News Panels -->
-            <!-- Col 1: Global News (Spans 2 cols) -->
-            <section class="news-section glass-panel" id="global-news-panel">
-                <div class="panel-header">GLOBAL_FEED // CORE</div>
-                <div id="global-news-list" class="scrolling-list">
-                    <div class="loading-text">UPLOADING_DATA...</div>
-                </div>
-            </section>
-
-            <!-- Col 2: Right Column (Stocks + Tech) -->
-            <div class="right-column-wrapper">
-
-                <!-- Analyst Ratings -->
-                <section class="widget-panel glass-panel" id="analyst-panel">
-                    <div class="panel-header">ANALYST_RATINGS</div>
-                    <div class="controls-container">
-                        <select id="ticker-select" class="cyber-select">
-                            <!-- Options injected by JS -->
-                        </select>
-                    </div>
-                    <div id="analyst-widget-container">
-                        <!-- TV Widget injected here -->
-                        <div class="loading-text">SELECT_TICKER...</div>
+                <!-- 1. Slideshow (Takes 2/3 width) -->
+                <section class="photo-section glass-panel">
+                    <div class="panel-header">VISUAL_MEMORY_BANK</div>
+                    <div id="slideshow-wrapper">
+                        <img id="dashboard-slide-1" class="slide-img active" src="" alt="">
+                        <img id="dashboard-slide-2" class="slide-img next" src="" alt="">
+                        <div class="scanline"></div>
                     </div>
                 </section>
 
-                <!-- Tech News -->
-                <section class="news-section glass-panel" id="tech-news-panel">
-                    <div class="panel-header">TECH_INTEL // TLDR</div>
-                    <div id="tech-news-list" class="scrolling-list">
-                        <div class="loading-text">INITIALIZING...</div>
+                <!-- 2. Quote (Takes 1/3 width) -->
+                <section class="quote-section glass-panel">
+                    <div class="quote-container">
+                        <span class="quote-icon">"</span>
+                        <p id="daily-quote">Loading system data...</p>
+                        <span class="quote-icon">"</span>
+                        <span class="quote-author" id="quote-author"></span>
                     </div>
                 </section>
+
             </div>
 
-            <!-- Row 3: Visuals (Full Width) -->
-            <section class="photo-section glass-panel">
-                <div class="panel-header">VISUAL_MEMORY_BANK</div>
-                <div id="slideshow-wrapper">
-                    <img id="dashboard-slide-1" class="slide-img active" src="" alt="">
-                    <img id="dashboard-slide-2" class="slide-img next" src="" alt="">
-                    <div class="scanline"></div>
+            <!-- ROW 2: Global News (Left) & Analyst/Tech (Right) -->
+            <div class="row-wrapper bottom-row">
+
+                <!-- 1. Global News (Takes 2/3 width) -->
+                <section class="news-section glass-panel" id="global-news-panel">
+                    <div class="panel-header">GLOBAL_FEED // CORE</div>
+                    <div id="global-news-list" class="scrolling-list">
+                        <div class="loading-text">UPLOADING_DATA...</div>
+                    </div>
+                </section>
+
+                <!-- 2. Right Column Wrapper (Takes 1/3 width) -->
+                <div class="right-column-stack">
+
+                    <!-- Analyst Ratings -->
+                    <section class="widget-panel glass-panel" id="analyst-panel">
+                        <div class="panel-header">ANALYST_RATINGS</div>
+                        <div class="controls-container">
+                            <select id="ticker-select" class="cyber-select">
+                                <!-- Options injected by JS -->
+                            </select>
+                        </div>
+                        <div id="analyst-widget-container">
+                            <!-- TV Widget injected here -->
+                            <div class="loading-text">SELECT_TICKER...</div>
+                        </div>
+                    </section>
+
+                    <!-- Tech News -->
+                    <section class="news-section glass-panel" id="tech-news-panel">
+                        <div class="panel-header">TECH_INTEL // TLDR</div>
+                        <div id="tech-news-list" class="scrolling-list">
+                            <div class="loading-text">INITIALIZING...</div>
+                        </div>
+                    </section>
+
                 </div>
-            </section>
+            </div>
 
         </main>
 
