@@ -1,8 +1,9 @@
+// Dashboard Logic
 document.addEventListener('DOMContentLoaded', () => {
     initClock();
     initQuotes();
     initGlobalNews();
-    initStockWidget(); // AddedStock Widget
+    initStockWidget();
     initTechNews();
     initSlideshow();
 });
@@ -11,13 +12,22 @@ document.addEventListener('DOMContentLoaded', () => {
 /*                                 Clock & Date                               */
 /* -------------------------------------------------------------------------- */
 function initClock() {
-    const timeEl = document.getElementById('clock');
-    const dateEl = document.getElementById('date');
+    // In sample.html, date is in a specific <p> and time isn't explicitly shown large, 
+    // but let's add time to the 'Systems Optimal' span or similar, 
+    // and date to the date text.
+    const dateEl = document.getElementById('header-date');
+    const statusEl = document.getElementById('header-status'); // We'll put time here
 
     function update() {
         const now = new Date();
-        timeEl.textContent = now.toLocaleTimeString('en-US', { hour12: false });
-        dateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        if (dateEl) {
+            // Format: Monday, Oct 23
+            dateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+        }
+        if (statusEl) {
+            // Format: 10:42 AM
+            statusEl.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        }
     }
 
     setInterval(update, 1000);
@@ -44,21 +54,22 @@ function initQuotes() {
     const quoteEl = document.getElementById('daily-quote');
     const authorEl = document.getElementById('quote-author');
 
+    if (!quoteEl || !authorEl) return;
+
     // Random Quote for now
     const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 
-    quoteEl.textContent = randomQuote.text;
-    authorEl.textContent = "- " + randomQuote.author;
+    quoteEl.innerHTML = `"${randomQuote.text}"`; // Added quotes in string
+    authorEl.textContent = `— ${randomQuote.author}`;
 }
 
 /* -------------------------------------------------------------------------- */
 /*                            Stock Analyst Widget                            */
 /* -------------------------------------------------------------------------- */
-// USER: Add your tickers here!
 const MY_TICKERS = [
-    { symbol: "NASDAQ:AAPL", label: "Apple Inc." },
-    { symbol: "NASDAQ:NVDA", label: "NVIDIA Corp." },
-    { symbol: "NASDAQ:TSLA", label: "Tesla Inc." },
+    { symbol: "NASDAQ:AAPL", label: "Apple" },
+    { symbol: "NASDAQ:NVDA", label: "NVIDIA" },
+    { symbol: "NASDAQ:TSLA", label: "Tesla" },
     { symbol: "NASDAQ:MSFT", label: "Microsoft" },
     { symbol: "NASDAQ:AMZN", label: "Amazon" },
     { symbol: "NASDAQ:GOOGL", label: "Google" },
@@ -69,13 +80,13 @@ function initStockWidget() {
     const select = document.getElementById('ticker-select');
     const container = document.getElementById('analyst-widget-container');
 
-    if (!select || !container) return; // Guard clause
+    if (!select || !container) return;
 
     // Populate Dropdown
     MY_TICKERS.forEach(t => {
         const option = document.createElement('option');
         option.value = t.symbol;
-        option.textContent = `${t.label} [${t.symbol.split(':')[1]}]`;
+        option.textContent = t.label;
         select.appendChild(option);
     });
 
@@ -87,18 +98,26 @@ function initStockWidget() {
         script.type = 'text/javascript';
         script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js';
         script.async = true;
+        // Adjusted height/width for the card - transparent background
         script.innerHTML = JSON.stringify({
             "interval": "1D",
             "width": "100%",
             "isTransparent": true,
-            "height": "100%",
+            "height": "100%", // Fit container
             "symbol": symbol,
-            "showIntervalTabs": true,
+            "showIntervalTabs": false, // Cleaner look
             "locale": "en",
             "colorTheme": "dark"
         });
 
         container.appendChild(script);
+
+        // Update Label
+        const labelEl = document.getElementById('stock-symbol-label');
+        if (labelEl) {
+            const ticker = MY_TICKERS.find(x => x.symbol === symbol);
+            labelEl.textContent = ticker ? ticker.symbol : symbol;
+        }
     }
 
     // Initial Load
@@ -110,114 +129,126 @@ function initStockWidget() {
     });
 }
 
-
 /* -------------------------------------------------------------------------- */
 /*                                 Global News                                */
 /* -------------------------------------------------------------------------- */
 // Using NYT Top Stories
 const GLOBAL_RSS_URL = "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml";
-// Alternative: BBC: http://feeds.bbci.co.uk/news/rss.xml
 const GLOBAL_RSS_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(GLOBAL_RSS_URL)}`;
 
 async function initGlobalNews() {
-    const listEl = document.getElementById('global-news-list');
+    const tableBody = document.getElementById('global-news-body');
+    if (!tableBody) return;
 
     try {
         const response = await fetch(GLOBAL_RSS_API);
         const data = await response.json();
 
         if (data.status === 'ok') {
-            listEl.innerHTML = ''; // Clear loading text
+            tableBody.innerHTML = ''; // Clear loading
 
-            // Show more items for Global News since it's a big panel
-            data.items.slice(0, 15).forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'news-item';
+            data.items.slice(0, 5).forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer group";
 
-                // Format Date nicely
+                // Parse Time
                 const date = new Date(item.pubDate);
-                const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const timeDiff = Math.round((new Date() - date) / 60000); // minutes
+                let timeStr = timeDiff + "m ago";
+                if (timeDiff > 60) timeStr = Math.round(timeDiff / 60) + "h ago";
 
-                div.innerHTML = `
-                    <a href="${item.link}" target="_blank" class="news-title">${item.title}</a>
-                    <div class="news-meta">
-                        <span style="color:var(--neon-yellow)">[${timeString}]</span> 
-                        ${item.content ? item.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : ''}
-                    </div>
+                // Source mock (NYT RSS doesn't give clean 'Source' field, but we know it's NYT)
+                const source = "NYT";
+
+                tr.innerHTML = `
+                    <td class="p-4 align-middle">
+                        <div class="size-8 rounded-full bg-white/10 flex items-center justify-center font-bold text-[10px]">
+                            ${source}</div>
+                    </td>
+                    <td class="py-4 pr-4">
+                        <h4 class="text-sm font-medium group-hover:text-primary transition-colors">${item.title}</h4>
+                        <p class="text-[10px] text-white/30">${timeStr}</p>
+                    </td>
+                    <td class="p-4 text-right">
+                        <a href="${item.link}" target="_blank" class="material-symbols-outlined text-white/20 hover:text-white transition-colors text-lg">open_in_new</a>
+                    </td>
                 `;
-
-                listEl.appendChild(div);
+                tableBody.appendChild(tr);
             });
-        } else {
-            listEl.innerHTML = '<div class="news-item">ERR: FEED_OFFLINE</div>';
         }
     } catch (e) {
-        console.error("Global RSS Fetch Error", e);
-        listEl.innerHTML = '<div class="news-item">ERR: NETWORK_FAILURE</div>';
+        console.error("Global RSS Error", e);
+        tableBody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-red-400">Error loading feed.</td></tr>';
     }
 }
 
 /* -------------------------------------------------------------------------- */
 /*                                 Tech News                                  */
 /* -------------------------------------------------------------------------- */
-// Using RSS2JSON to get TechCrunch or The Verge
-const RSS_FEED_URL = "https://techcrunch.com/feed/";
-const RSS_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_FEED_URL)}`;
+const TECH_RSS_URL = "https://techcrunch.com/feed/";
+const TECH_RSS_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(TECH_RSS_URL)}`;
 
 async function initTechNews() {
     const listEl = document.getElementById('tech-news-list');
+    if (!listEl) return;
 
     try {
-        const response = await fetch(RSS_API);
+        const response = await fetch(TECH_RSS_API);
         const data = await response.json();
 
         if (data.status === 'ok') {
-            listEl.innerHTML = ''; // Clear loading text
+            listEl.innerHTML = '';
 
-            data.items.slice(0, 8).forEach(item => {
+            data.items.slice(0, 4).forEach(item => { // Limit to fit logic
                 const div = document.createElement('div');
-                div.className = 'news-item';
+                div.className = "flex gap-4 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group";
+
+                // Image or Placeholder
+                let imgUrl = item.thumbnail || item.enclosure?.link;
+                // Fallback to random Abstract if no image
+                if (!imgUrl) imgUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuA2-5nZm0Dr-ArrtsiVUzLdVFjlxItgsP2-tsYlD3x7RPjiq0yer-D25bMli6agnRA4B_boMitScTaBL-PuLoKugQL7gqOHrsMvA-yFym-iw2Q4Et004RLg3GVBJoOefuGdM2o4PiBb1HFEKwfH9K_PmXSvTpGTusiRdl_BbXpX8ZhaF158fCuqHn56vCG95xpSMi9ssPq6RrodkGaHMDWEsC86sN12k9uYdRqRhh6_4myzkMm-A44vJJouwkwgLGSy17kVseYFkPAr";
+
+                const date = new Date(item.pubDate);
+                const timeDiff = Math.round((new Date() - date) / 3600000); // hours
+                const timeStr = timeDiff + " hours ago";
 
                 div.innerHTML = `
-                    <a href="${item.link}" target="_blank" class="news-title">${item.title}</a>
+                    <div class="size-16 rounded-lg bg-cover bg-center shrink-0"
+                        style="background-image: url('${imgUrl}')">
+                    </div>
+                    <div class="flex flex-col justify-center w-full">
+                        <p class="text-[10px] text-primary font-bold uppercase mb-1">Tech</p>
+                        <a href="${item.link}" target="_blank" class="text-sm font-semibold group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                            ${item.title}</a>
+                        <p class="text-[10px] text-white/30 mt-1">${timeStr}</p>
+                    </div>
                 `;
 
                 listEl.appendChild(div);
             });
-        } else {
-            listEl.innerHTML = '<div class="news-item">ERR: DATA_CORRUPT</div>';
         }
     } catch (e) {
-        console.error("RSS Fetch Error", e);
-        listEl.innerHTML = '<div class="news-item">ERR: SIGNAL_LOST</div>';
+        console.error("Tech RSS Error", e);
     }
 }
 
 /* -------------------------------------------------------------------------- */
-/*                             Slideshow (Lazy)                               */
+/*                             Slideshow (Cycled)                             */
 /* -------------------------------------------------------------------------- */
-// Default fallbacks if no JSON found
 const DEFAULT_IMAGES = [
     "slideshow/IMG_1474.png",
     "slideshow/IMG_1494.png",
     "slideshow/IMG_2003.png",
     "slideshow/IMG_2005.png",
-    "slideshow/IMG_2693.png",
-    "slideshow/IMG_2841.png",
-    "slideshow/IMG_2878.png",
-    "slideshow/IMG_3246.jpg",
     "slideshow/IMG_7223.png"
 ];
 
 async function initSlideshow() {
-    const slide1 = document.getElementById('dashboard-slide-1');
-    const slide2 = document.getElementById('dashboard-slide-2');
-
-    if (!slide1 || !slide2) return;
+    const bgContainer = document.getElementById('slideshow-bg');
+    if (!bgContainer) return;
 
     let images = [];
 
-    // Try to fetch generated list first
     try {
         const res = await fetch('slideshow/photos.json');
         if (res.ok) {
@@ -232,37 +263,24 @@ async function initSlideshow() {
 
     if (images.length === 0) return;
 
-    // Shuffle Array
+    // Shuffle
     for (let i = images.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [images[i], images[j]] = [images[j], images[i]];
     }
 
     let currentIndex = 0;
-    let activeSlide = 1;
 
-    // Initialize first image
-    slide1.src = images[0];
-    slide1.style.opacity = 1;
+    // Initial
+    bgContainer.style.backgroundImage = `url('${images[0]}')`;
 
-    // Transition Loop
+    // Interval
     setInterval(() => {
-        const nextIndex = (currentIndex + 1) % images.length;
-        const nextImage = images[nextIndex];
-
-        const nextSlideEl = activeSlide === 1 ? slide2 : slide1;
-        const currentSlideEl = activeSlide === 1 ? slide1 : slide2;
-
-        // Load next image
-        nextSlideEl.src = nextImage;
-
-        // Swap Opacity
-        nextSlideEl.style.opacity = 1;
-        currentSlideEl.style.opacity = 0;
-
-        // Update State
-        currentIndex = nextIndex;
-        activeSlide = activeSlide === 1 ? 2 : 1;
-
-    }, 5000); // 5 Seconds
+        currentIndex = (currentIndex + 1) % images.length;
+        // Fade effect is handled by CSS transition on bg-image? 
+        // CSS bg-image transition isn't standard in all browsers, 
+        // but the sample uses specific div. Let's just swap for now.
+        // For smoother transition, we might need double buffer, but sticky to strict reqs first.
+        bgContainer.style.backgroundImage = `url('${images[currentIndex]}')`;
+    }, 5000);
 }

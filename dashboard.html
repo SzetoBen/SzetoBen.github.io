@@ -1,108 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ben's Dashboard</title>
-    <!-- Fonts: Cyberpunk -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
-        rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Personal Command Center</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
 
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="dashboard.css">
+
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d0df2",
+                        "background-light": "#f5f5f8",
+                        "background-dark": "#050505",
+                        "card-dark": "rgba(20, 20, 45, 0.6)",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
 </head>
 
-<body>
-
-    <div class="dashboard-container">
-        <!-- Header: Time & Date -->
-        <header class="dashboard-header">
-            <div class="header-left">
-                <h1 class="glitch-text" data-text="NET.DASHBOARD">NET.DASHBOARD</h1>
+<body class="bg-background-dark text-white min-h-screen selection:bg-primary/30">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Vertical Nav Dock -->
+        <aside
+            class="w-20 flex flex-col items-center py-8 gap-8 border-r border-white/5 bg-background-dark/50 backdrop-blur-md">
+            <div
+                class="size-12 bg-primary rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(13,13,242,0.5)]">
+                <span class="material-symbols-outlined text-white text-2xl">grid_view</span>
             </div>
-            <div class="header-right">
-                <div id="clock" class="neon-text">00:00:00</div>
-                <div id="date" class="sub-text">YYYY-MM-DD</div>
+            <nav class="flex flex-col gap-6">
+                <button
+                    class="size-12 rounded-xl flex items-center justify-center text-white/40 hover:text-primary hover:bg-primary/10 transition-colors">
+                    <span class="material-symbols-outlined">dashboard</span>
+                </button>
+                <div
+                    class="size-12 rounded-xl flex items-center justify-center text-primary bg-primary/10 transition-colors">
+                    <!-- Active State Mock -->
+                    <span class="material-symbols-outlined">monitoring</span>
+                </div>
+            </nav>
+            <div class="mt-auto">
+                <a href="index.html" class="size-10 rounded-full border-2 border-primary/50 overflow-hidden block"
+                    title="Exit">
+                    <!-- Placeholder Avatar -->
+                    <div class="w-full h-full bg-slate-800 flex items-center justify-center text-xs">EXIT</div>
+                </a>
             </div>
-        </header>
-
-        <!-- Main Grid -->
-        <main class="dashboard-grid">
-
-            <!-- ROW 1: Slideshow (Left) & Quote (Right) -->
-            <div class="row-wrapper top-row">
-
-                <!-- 1. Slideshow (Takes 2/3 width) -->
-                <section class="photo-section glass-panel">
-                    <div class="panel-header">VISUAL_MEMORY_BANK</div>
-                    <div id="slideshow-wrapper">
-                        <img id="dashboard-slide-1" class="slide-img active" src="" alt="">
-                        <img id="dashboard-slide-2" class="slide-img next" src="" alt="">
-                        <div class="scanline"></div>
+        </aside>
+        <!-- Main Dashboard Content -->
+        <main class="flex-1 overflow-y-auto custom-scrollbar p-8">
+            <!-- Header Area -->
+            <header class="flex justify-between items-center mb-10">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight text-white mb-1">Command Center</h1>
+                    <p class="text-white/50 text-sm font-medium">
+                        <span id="header-date">Loading Date...</span> •
+                        <span class="text-primary neon-glow" id="header-status">Systems Optimal</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xl">search</span>
+                        <input
+                            class="bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none w-64 transition-all"
+                            placeholder="Search data points..." type="text" />
                     </div>
-                </section>
+                </div>
+            </header>
+            <!-- Dashboard Grid -->
+            <div class="grid grid-cols-12 gap-6 auto-rows-[220px]">
 
-                <!-- 2. Quote (Takes 1/3 width) -->
-                <section class="quote-section glass-panel">
-                    <div class="quote-container">
-                        <span class="quote-icon">"</span>
-                        <p id="daily-quote">Loading system data...</p>
-                        <span class="quote-icon">"</span>
-                        <span class="quote-author" id="quote-author"></span>
+                <!-- 1. Image Slideshow Widget (Wide Top Left) -->
+                <div class="col-span-12 lg:col-span-8 row-span-2 glass-panel rounded-xl overflow-hidden relative group">
+                    <!-- ID for JS to target background image -->
+                    <div id="slideshow-bg"
+                        class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                        style="background-image: url('slideshow/IMG_1474.png')">
                     </div>
-                </section>
-
-            </div>
-
-            <!-- ROW 2: Global News (Left) & Analyst/Tech (Right) -->
-            <div class="row-wrapper bottom-row">
-
-                <!-- 1. Global News (Takes 2/3 width) -->
-                <section class="news-section glass-panel" id="global-news-panel">
-                    <div class="panel-header">GLOBAL_FEED // CORE</div>
-                    <div id="global-news-list" class="scrolling-list">
-                        <div class="loading-text">UPLOADING_DATA...</div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 right-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span
+                                class="bg-primary/30 backdrop-blur-md border border-primary/50 text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full font-bold">Memory</span>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-4">Visual Archive</h2>
+                        <div class="flex gap-1.5">
+                            <div class="h-1 w-12 bg-primary rounded-full"></div>
+                        </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- 2. Right Column Wrapper (Takes 1/3 width) -->
-                <div class="right-column-stack">
+                <!-- 2. Motivational Quote Block (Top Right) -->
+                <div
+                    class="col-span-12 lg:col-span-4 row-span-1 glass-panel rounded-xl p-6 flex flex-col justify-center border-l-4 border-l-primary relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-5">
+                        <span class="material-symbols-outlined text-9xl">format_quote</span>
+                    </div>
+                    <p id="daily-quote" class="text-xl font-medium leading-relaxed mb-4 relative z-10">
+                        "Loading wisdom..."
+                    </p>
+                    <p id="quote-author" class="text-white/40 text-sm">— System</p>
+                </div>
 
-                    <!-- Analyst Ratings -->
-                    <section class="widget-panel glass-panel" id="analyst-panel">
-                        <div class="panel-header">ANALYST_RATINGS</div>
-                        <div class="controls-container">
-                            <select id="ticker-select" class="cyber-select">
-                                <!-- Options injected by JS -->
-                            </select>
+                <!-- 3. Stock Analyst Rating Card (Middle Right) -->
+                <div class="col-span-12 lg:col-span-4 row-span-1 glass-panel rounded-xl p-6 flex flex-col">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="text-xs text-white/50 font-bold uppercase tracking-wider">Analysis</p>
+                        <!-- Dropdown inserted here -->
+                        <select id="ticker-select"
+                            class="bg-black/50 border border-white/10 text-xs rounded p-1 text-white outline-none focus:border-primary">
+                            <!-- JS Populates -->
+                        </select>
+                    </div>
+
+                    <div class="relative flex-1" id="analyst-widget-container">
+                        <!-- TradingView Widget Injected Here -->
+                        <div class="flex items-center justify-center h-full text-xs text-white/30">Loading Widget...
                         </div>
-                        <div id="analyst-widget-container">
-                            <!-- TV Widget injected here -->
-                            <div class="loading-text">SELECT_TICKER...</div>
-                        </div>
-                    </section>
+                    </div>
+                </div>
 
-                    <!-- Tech News -->
-                    <section class="news-section glass-panel" id="tech-news-panel">
-                        <div class="panel-header">TECH_INTEL // TLDR</div>
-                        <div id="tech-news-list" class="scrolling-list">
-                            <div class="loading-text">INITIALIZING...</div>
-                        </div>
-                    </section>
+                <!-- 4. Recent Tech News (Bottom Left Wide) -->
+                <div class="col-span-12 lg:col-span-6 row-span-2 glass-panel rounded-xl flex flex-col">
+                    <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                        <h3 class="font-bold flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">memory</span>
+                            Tech Pulse
+                        </h3>
+                    </div>
+                    <div id="tech-news-list" class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
+                        <!-- JS Injects News Here -->
+                    </div>
+                </div>
 
+                <!-- 5. Global News Overview (Bottom Right Wide) -->
+                <div class="col-span-12 lg:col-span-6 row-span-2 glass-panel rounded-xl flex flex-col">
+                    <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                        <h3 class="font-bold flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">public</span>
+                            Global Monitor
+                        </h3>
+                        <div class="flex gap-2">
+                            <span class="size-2 bg-primary rounded-full animate-pulse"></span>
+                            <span class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Live</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <tbody id="global-news-body">
+                                <!-- JS Injects Rows Here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-
         </main>
-
-        <footer class="dashboard-footer">
-            <a href="index.html" class="back-link">[ SYSTEM_EXIT ]</a>
-            <div class="status-indicator">ONLINE :: SECURE</div>
-        </footer>
     </div>
 
+    <!-- Main Logic -->
     <script src="dashboard.js"></script>
 </body>
 
