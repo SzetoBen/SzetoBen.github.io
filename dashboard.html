@@ -5,16 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ben's Dashboard</title>
-    <!-- Fonts: Inter for UI, JetBrains Mono for Code, Quicksand for Cuteness -->
+    <!-- Fonts: Cyberpunk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&family=Quicksand:wght@500;700&family=M+PLUS+Rounded+1c:wght@500;800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="dashboard.css">
-    <!-- TradingView Widget Script (Async) -->
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <!-- TradingView Script Removed -->
 </head>
 
 <body>
@@ -23,7 +21,7 @@
         <!-- Header: Time & Date -->
         <header class="dashboard-header">
             <div class="header-left">
-                <h1 class="glitch-text" data-text="DASHBOARD_V1">DASHBOARD_V1</h1>
+                <h1 class="glitch-text" data-text="NET.DASHBOARD">NET.DASHBOARD</h1>
             </div>
             <div class="header-right">
                 <div id="clock" class="neon-text">00:00:00</div>
@@ -38,42 +36,32 @@
             <section class="quote-section glass-panel">
                 <div class="quote-container">
                     <span class="quote-icon">"</span>
-                    <p id="daily-quote">Loading wisdom...</p>
+                    <p id="daily-quote">Loading system data...</p>
                     <span class="quote-icon">"</span>
                     <span class="quote-author" id="quote-author"></span>
                 </div>
             </section>
 
-            <!-- Row 2: Stocks & Market (3 Columns) -->
-            <!-- Col 1: Watchlist -->
-            <section class="widget-panel glass-panel" id="stock-watchlist">
-                <div class="panel-header">WATCHLIST</div>
-                <!-- TradingView Widget: Market Overview -->
-                <div class="tradingview-widget-container">
-                    <div id="tradingview_watchlist"></div>
+            <!-- Row 2: News Panels -->
+            <!-- Col 1: Global News (Spans 2 cols) -->
+            <section class="news-section glass-panel" id="global-news-panel">
+                <div class="panel-header">GLOBAL_FEED // CORE</div>
+                <div id="global-news-list" class="scrolling-list">
+                    <div class="loading-text">UPLOADING_DATA...</div>
                 </div>
             </section>
 
-            <!-- Col 2: Chart/Technical -->
-            <section class="widget-panel glass-panel" id="stock-chart">
-                <div class="panel-header">MARKET_ANALYSIS</div>
-                <!-- TradingView Widget: Symbol Overview -->
-                <div id="tradingview_chart"></div>
-            </section>
-
-            <!-- Col 3: Timeline/News -->
-            <section class="widget-panel glass-panel" id="stock-news">
-                <div class="panel-header">MARKET_InTEL</div>
-                <!-- TradingView Widget: Timeline -->
-                <div class="tradingview-widget-container">
-                    <div id="tradingview_timeline"></div>
+            <!-- Col 2: Tech News (Spans 1 col) -->
+            <section class="news-section glass-panel" id="tech-news-panel">
+                <div class="panel-header">TECH_INTEL // TLDR</div>
+                <div id="tech-news-list" class="scrolling-list">
+                    <div class="loading-text">INITIALIZING...</div>
                 </div>
             </section>
 
-            <!-- Row 3: Visuals & Tech News -->
-            <!-- Visuals: Slideshow -->
+            <!-- Row 3: Visuals (Full Width) -->
             <section class="photo-section glass-panel">
-                <div class="panel-header">MEMORY_ARCHIVE</div>
+                <div class="panel-header">VISUAL_MEMORY_BANK</div>
                 <div id="slideshow-wrapper">
                     <img id="dashboard-slide-1" class="slide-img active" src="" alt="">
                     <img id="dashboard-slide-2" class="slide-img next" src="" alt="">
@@ -81,20 +69,11 @@
                 </div>
             </section>
 
-            <!-- Tech News -->
-            <section class="news-section glass-panel">
-                <div class="panel-header">TECH_FEED // TLDR</div>
-                <div id="tech-news-list" class="scrolling-list">
-                    <!-- News items injected here -->
-                    <div class="loading-text">Initializing Feed...</div>
-                </div>
-            </section>
-
         </main>
 
         <footer class="dashboard-footer">
-            <a href="index.html" class="back-link">[ RETURN_HOME ]</a>
-            <div class="status-indicator">SYSTEM_ONLINE</div>
+            <a href="index.html" class="back-link">[ SYSTEM_EXIT ]</a>
+            <div class="status-indicator">ONLINE :: SECURE</div>
         </footer>
     </div>
 
