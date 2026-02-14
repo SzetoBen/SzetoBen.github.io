@@ -1,10 +1,9 @@
-// Dashboard Logic
 document.addEventListener('DOMContentLoaded', () => {
     initClock();
     initQuotes();
-    // initTradingViewWidgets(); // Removed as requested
+    initGlobalNews();
+    initStockWidget(); // AddedStock Widget
     initTechNews();
-    initGlobalNews(); // New Global News
     initSlideshow();
 });
 

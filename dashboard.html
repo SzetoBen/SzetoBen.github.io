@@ -51,13 +51,31 @@
                 </div>
             </section>
 
-            <!-- Col 2: Tech News (Spans 1 col) -->
-            <section class="news-section glass-panel" id="tech-news-panel">
-                <div class="panel-header">TECH_INTEL // TLDR</div>
-                <div id="tech-news-list" class="scrolling-list">
-                    <div class="loading-text">INITIALIZING...</div>
-                </div>
-            </section>
+            <!-- Col 2: Right Column (Stocks + Tech) -->
+            <div class="right-column-wrapper">
+
+                <!-- Analyst Ratings -->
+                <section class="widget-panel glass-panel" id="analyst-panel">
+                    <div class="panel-header">ANALYST_RATINGS</div>
+                    <div class="controls-container">
+                        <select id="ticker-select" class="cyber-select">
+                            <!-- Options injected by JS -->
+                        </select>
+                    </div>
+                    <div id="analyst-widget-container">
+                        <!-- TV Widget injected here -->
+                        <div class="loading-text">SELECT_TICKER...</div>
+                    </div>
+                </section>
+
+                <!-- Tech News -->
+                <section class="news-section glass-panel" id="tech-news-panel">
+                    <div class="panel-header">TECH_INTEL // TLDR</div>
+                    <div id="tech-news-list" class="scrolling-list">
+                        <div class="loading-text">INITIALIZING...</div>
+                    </div>
+                </section>
+            </div>
 
             <!-- Row 3: Visuals (Full Width) -->
             <section class="photo-section glass-panel">
