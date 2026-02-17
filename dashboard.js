@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     initClock();
     initQuotes();
-    initGlobalNews();
+    initDailyBrief();
     initStockWidget();
     initTechNews();
     initSlideshow();
@@ -130,55 +130,62 @@ function initStockWidget() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                 Global News                                */
+/*                                Daily Brief                                 */
 /* -------------------------------------------------------------------------- */
-// Using NYT Top Stories
-const GLOBAL_RSS_URL = "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml";
-const GLOBAL_RSS_API = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(GLOBAL_RSS_URL)}`;
+async function initDailyBrief() {
+    const container = document.getElementById('daily-brief-container');
+    const dateEl = document.getElementById('brief-date');
 
-async function initGlobalNews() {
-    const tableBody = document.getElementById('global-news-body');
-    if (!tableBody) return;
+    if (!container || !dateEl) return;
 
     try {
-        const response = await fetch(GLOBAL_RSS_API);
+        // Add cache busting to ensure we get the latest brief
+        const response = await fetch('data/daily_brief.json?t=' + new Date().getTime());
+
+        if (!response.ok) {
+            throw new Error("Brief not found");
+        }
+
         const data = await response.json();
 
-        if (data.status === 'ok') {
-            tableBody.innerHTML = ''; // Clear loading
-
-            data.items.slice(0, 5).forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer group";
-
-                // Parse Time
-                const date = new Date(item.pubDate);
-                const timeDiff = Math.round((new Date() - date) / 60000); // minutes
-                let timeStr = timeDiff + "m ago";
-                if (timeDiff > 60) timeStr = Math.round(timeDiff / 60) + "h ago";
-
-                // Source mock (NYT RSS doesn't give clean 'Source' field, but we know it's NYT)
-                const source = "NYT";
-
-                tr.innerHTML = `
-                    <td class="p-4 align-middle">
-                        <div class="size-8 rounded-full bg-white/10 flex items-center justify-center font-bold text-[10px]">
-                            ${source}</div>
-                    </td>
-                    <td class="py-4 pr-4">
-                        <h4 class="text-sm font-medium group-hover:text-primary transition-colors">${item.title}</h4>
-                        <p class="text-[10px] text-white/30">${timeStr}</p>
-                    </td>
-                    <td class="p-4 text-right">
-                        <a href="${item.link}" target="_blank" class="material-symbols-outlined text-white/20 hover:text-white transition-colors text-lg">open_in_new</a>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
+        // Update Date
+        if (data.date) {
+            dateEl.textContent = data.date;
+        } else {
+            dateEl.textContent = "Unknown Date";
         }
+
+        // Render Segments
+        container.innerHTML = '';
+
+        if (data.brief_segments && data.brief_segments.length > 0) {
+            data.brief_segments.forEach(segment => {
+                const p = document.createElement('p');
+                // Check if segment is a markdown-style header or bullet
+                // Simple formatting: 
+                // If line starts with "Market Update:", make it bold?
+                // Let's just render text for now, maybe handle newlines.
+
+                // Convert newlines to <br> if needed, or just let CSS handle whitespace
+                // dashboard.css likely doesn't have whitespace-pre-line by default for p.
+
+                p.innerHTML = segment.replace(/\n/g, '<br>');
+                p.className = "mb-2 last:mb-0";
+                container.appendChild(p);
+            });
+        } else {
+            container.innerHTML = '<p class="text-white/50 italic">No brief content available.</p>';
+        }
+
     } catch (e) {
-        console.error("Global RSS Error", e);
-        tableBody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-red-400">Error loading feed.</td></tr>';
+        console.error("Daily Brief Error", e);
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-white/30">
+                <span class="material-symbols-outlined text-4xl mb-2">sentiment_dissatisfied</span>
+                <p>No brief available currently.</p>
+            </div>
+        `;
+        dateEl.textContent = "Offline";
     }
 }
 

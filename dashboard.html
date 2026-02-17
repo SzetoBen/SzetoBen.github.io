@@ -82,15 +82,6 @@
                         <span class="text-primary neon-glow" id="header-status">Systems Optimal</span>
                     </p>
                 </div>
-                <!-- <div class="flex items-center gap-4">
-                    <div class="relative">
-                        <span
-                            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xl">search</span>
-                        <input
-                            class="bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none w-64 transition-all"
-                            placeholder="Search data points..." type="text" />
-                    </div>
-                </div> -->
             </header>
             <!-- Dashboard Grid -->
             <div class="grid grid-cols-12 gap-6 auto-rows-[220px]">
@@ -158,24 +149,29 @@
                     </div>
                 </div>
 
-                <!-- 5. Global News Overview (Bottom Right Wide) -->
+                <!-- 5. Daily Brief (Bottom Right Wide) -->
                 <div class="col-span-12 lg:col-span-6 row-span-2 glass-panel rounded-xl flex flex-col">
                     <div class="p-6 border-b border-white/5 flex justify-between items-center">
                         <h3 class="font-bold flex items-center gap-2">
-                            <span class="material-symbols-outlined text-primary">public</span>
-                            Global Monitor
+                            <span class="material-symbols-outlined text-primary">article</span>
+                            Daily Brief
                         </h3>
                         <div class="flex gap-2">
                             <span class="size-2 bg-primary rounded-full animate-pulse"></span>
-                            <span class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Live</span>
+                            <span id="brief-date"
+                                class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Loading...</span>
                         </div>
                     </div>
-                    <div class="flex-1 overflow-y-auto custom-scrollbar">
-                        <table class="w-full text-left border-collapse">
-                            <tbody id="global-news-body">
-                                <!-- JS Injects Rows Here -->
-                            </tbody>
-                        </table>
+                    <div id="daily-brief-container"
+                        class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4 text-sm leading-relaxed text-white/80">
+                        <!-- JS Injects Brief Here -->
+                        <div class="animate-pulse flex space-x-4">
+                            <div class="flex-1 space-y-4 py-1">
+                                <div class="h-4 bg-white/10 rounded w-3/4"></div>
+                                <div class="h-4 bg-white/10 rounded"></div>
+                                <div class="h-4 bg-white/10 rounded w-5/6"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
