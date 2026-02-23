@@ -3,7 +3,7 @@ name: Update Daily Brief
 on:
   schedule:
     # Runs at 08:00 UTC every day
-    - cron: '10 17 * * *'
+    - cron: '01 17 * * *'
   workflow_dispatch:
 
 permissions:
